@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
-import { IoIosCheckmarkCircle } from 'react-icons/io';
-import { MdDeleteForever } from 'react-icons/md';
-import { FiCircle } from 'react-icons/fi';
+import { IoIosCheckmarkCircle } from "react-icons/io";
+import { MdDeleteForever } from "react-icons/md";
+import { FiCircle } from "react-icons/fi";
+import Swal from "sweetalert2";
 
 const App = () => {
   const [todos, setTodos] = useState([]);
-  const [todoItem, setTodoItem] = useState('');
+  const [todoItem, setTodoItem] = useState("");
   const [error, setError] = useState(false);
-  const [completedTasks, setCompletedTasks] = useState('');
+  const [completedTasks, setCompletedTasks] = useState("");
 
   // Define a custom hook to get the todos from localStorage
   const useLocalStorage = (key, initialValue) => {
@@ -38,7 +39,7 @@ const App = () => {
   };
 
   // Use the custom hook to get the todos from localStorage
-  const [storedTodos, setStoredTodos] = useLocalStorage('todos', []);
+  const [storedTodos, setStoredTodos] = useLocalStorage("todos", []);
 
   // Update the todos state when the storedTodos change
   useEffect(() => {
@@ -59,18 +60,35 @@ const App = () => {
       };
       // Update the storedTodos using the setter function
       setStoredTodos([newTodoItem, ...storedTodos]);
-      setTodoItem('');
+      setTodoItem("");
     } else {
       setError(true);
-      setTodoItem('');
+      setTodoItem("");
     }
   };
 
   // Define a function to delete a todo
   const deleteTodo = (id) => {
-    let newTodos = todos.filter((todo) => todo.id !== id);
-    // Update the storedTodos using the setter function
-    setStoredTodos([...newTodos]);
+    Swal.fire({
+      title: "Are you sure you want to delete this todo?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your file has been deleted.",
+          icon: "success",
+        });
+        let newTodos = todos.filter((todo) => todo.id !== id);
+        // Update the storedTodos using the setter function
+        setStoredTodos([...newTodos]);
+      }
+    });
   };
 
   // Define a function to toggle the completion status of a todo
@@ -103,9 +121,9 @@ const App = () => {
     };
   }, [error]);
 
-  let Today = new Date().toLocaleDateString('en-us', { weekday: 'long' });
-  let day = new Date().toLocaleDateString('en-us', { day: 'numeric' });
-  let month = new Date().toLocaleDateString('en-us', { month: 'short' });
+  let Today = new Date().toLocaleDateString("en-us", { weekday: "long" });
+  let day = new Date().toLocaleDateString("en-us", { day: "numeric" });
+  let month = new Date().toLocaleDateString("en-us", { month: "short" });
 
   return (
     <div className="app-container">
@@ -118,7 +136,7 @@ const App = () => {
             <input
               type="text"
               value={todoItem}
-              className={error ? 'error' : ''}
+              className={error ? "error" : ""}
               onChange={(e) => setTodoItem(e.target.value)}
               placeholder="Type Todo here..."
             />
@@ -150,11 +168,11 @@ const App = () => {
                   <FiCircle />
                 ) : (
                   <IoIosCheckmarkCircle
-                    className={complete ? 'icon-done' : ''}
+                    className={complete ? "icon-done" : ""}
                   />
                 )}
               </div>
-              <p className={complete ? 'text-done' : ''}>{todo}</p>
+              <p className={complete ? "text-done" : ""}>{todo}</p>
               <MdDeleteForever
                 onClick={() => deleteTodo(id)}
                 className="icon delete-icon"

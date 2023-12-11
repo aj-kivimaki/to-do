@@ -125,6 +125,8 @@ const App = () => {
   let day = new Date().toLocaleDateString("en-us", { day: "numeric" });
   let month = new Date().toLocaleDateString("en-us", { month: "short" });
 
+  console.log(month);
+
   return (
     <div className="app-container">
       <div className="header-section">
